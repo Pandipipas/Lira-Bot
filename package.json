@@ -1,6 +1,6 @@
 {
   "name": "lira-bot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A Discord bot for managing tournaments with the Challonge API. Run brackets, track scores, and update results directly in your server.",
   "main": "src/index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "discord.js": "^14.21.0",
     "discordjs-v14-bot-template": "file:",
     "dotenv": "^16.6.1",
+    "mongoose": "^8.16.3",
     "quick-yaml.db": "^1.2.2"
   },
   "devDependencies": {

@@ -5,6 +5,7 @@ const MessageCommand = require("../../structure/MessageCommand");
 const { handleMessageCommandOptions, handleApplicationCommandOptions } = require("./CommandOptions");
 const ApplicationCommand = require("../../structure/ApplicationCommand");
 const { error } = require("../../utils/Console");
+const GuildConfig = require("../../models/GuildConfig");
 
 class CommandsListener {
     /**
@@ -19,7 +20,18 @@ class CommandsListener {
 
             let prefix = config.commands.prefix;
 
-            if (client.database.has('prefix-' + message.guild.id)) {
+            if (config.database.useMongoDB) {
+                try {
+                    const guildData = await GuildConfig.findOne({ guildId: message.guild.id });
+                    if (guildData?.prefix) {
+                        prefix = guildData.prefix;
+                    }
+                } catch (err) {
+                    console.error('Error retrieving prefix from MongoDB:', err);
+                }
+            } 
+
+            else if (client.database.has('prefix-' + message.guild.id)) {
                 prefix = client.database.get('prefix-' + message.guild.id);
             }
 

@@ -79,12 +79,13 @@
 - **colors** → latest
 - **discord.js** → 14.21.0 or newer
 - **dotenv** → latest
+- **mongoose** → latest
 - **quick-yaml.db** → latest
 
 > [!NOTE]
 > **Node.js v22.12.0** or newer is required to run **discord.js**.
 
-## Setup
+### Setup
 
 1. Download this project
 2. Extract the **.zip** file into a normal folder.
@@ -102,10 +103,28 @@
 > Please remember not to share your Discord bot token! This will give access to attackers to do anything they want with your bot, so please keep the token in a safe place, which is the **.env** file.
 
 6. Initialize a new project: `npm init` (To skip every step, do `npm init -y`).
-7. Install all [required dependencies](#dependencies): `npm install colors discord.js dotenv quick-yaml.db`
+7. Install all [required dependencies](#dependencies): `npm install`
 
 8. Run the command `node .` or `npm run start` to start the bot.
 9. Enjoy! The bot should be online.
+
+### MongoDB Setup
+
+1. Go to the [MongoDB](https://www.mongodb.com/) website.
+2. Create an account using a safe email and password.
+
+3. Once on the Project page, create a project with the name of your application.
+4. On the clusters page of your project, create a free or paid cluster. (This is your preference.)
+
+5. After the cluster creation you will be prompted to connect to your application. Select `Connecting with MongoDB Driver`
+6. Copy the connection URI and paste it in the `.env` under `DATABASE_URI`
+7. On `src/config.js` set `useMongoDB: true` 
+
+>[!CAUTION]
+> Please remember not to share your MongoDB Database URI! This will give access to attackers to do anything they want with your data and database including stealing and modifying it, so please keep the URI in a safe place, which is the **.env** file.
+
+8. Run the command `node .` or `npm run start` to start the bot.
+9. Now MongoDB will be connected!
 
 
 
