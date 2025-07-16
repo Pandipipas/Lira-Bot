@@ -36,6 +36,10 @@ class DiscordBot extends Client {
     database = new QuickYAML(config.database.path);
 
     connectToDatabase = async () => {
+        if (!config.database.useMongoDB) {
+            warn('Skipping MongoDB connection (quick-yml mode enabled)');
+            return;
+        }
         try {
             warn('Attempting connect to MongoDB... (this might take a while!)');
             await mongoose.connect(process.env.DATABASE_URI);

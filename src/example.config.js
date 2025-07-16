@@ -1,6 +1,7 @@
 const config = {
     database: {
-        path: './database.yml' // The database path.
+        path: './database.yml', // The database path.
+        useMongoDB: false // If true, the bot will use mongodb database
     },
     development: {
         enabled: false, // If true, the bot will register all application commands to a specific guild (not globally).
