@@ -2,6 +2,7 @@ const { Message } = require("discord.js");
 const DiscordBot = require("../../client/DiscordBot");
 const MessageCommand = require("../../structure/MessageCommand");
 const config = require("../../config");
+const GuildConfig = require("../../models/GuildConfig");
 
 module.exports = new MessageCommand({
     command: {
@@ -19,30 +20,44 @@ module.exports = new MessageCommand({
      * @param {string[]} args
      */
     run: async (client, message, args) => {
-        if (!args[0]) {
-            await message.reply({
-                content: 'You must provide the prefix!'
-            });
+        const newPrefix = args[0];
 
-            return;
+        if (!newPrefix) {
+            return await message.reply({ content: 'You must provide the prefix!' });
         }
 
-        if (args[0].length > 5) {
-            await message.reply({
-                content: 'The prefix is too long! (' + args[0].length + ' > 5)'
-            });
-
-            return;
+        if (newPrefix.length > 5) {
+            return await message.reply({ content: `The prefix is too long! (${newPrefix.length} > 5)` });
         }
 
-        if (args[0] === config.commands.prefix) {
-            client.database.delete('prefix-' + message.guild.id);
+        if (config.database.useMongoDB) {
+            try {
+                const updated = await GuildConfig.findOneAndUpdate(
+                    { guildId: message.guild.id },
+                    {
+                        guildName: message.guild.name,
+                        prefix: newPrefix 
+                    },
+                    { upsert: true, new: true }
+                );
+
+                return await message.reply({
+                    content: `Successfully updated the prefix to \`${updated.prefix}\`.`
+                });
+            } catch (err) {
+                console.error(err);
+                return await message.reply({ content: 'Failed to update prefix in MongoDB.' });
+            }
         } else {
-            client.database.set('prefix-' + message.guild.id, args[0]);
-        }
+            if (newPrefix === config.commands.prefix) {
+                client.database.delete('prefix-' + message.guild.id);
+            } else {
+                client.database.set('prefix-' + message.guild.id, newPrefix);
+            }
 
-        await message.reply({
-            content: 'Successfully updated the prefix to \`' + args[0] + '\`.'
-        });
+            return await message.reply({
+                content: `Successfully updated the prefix to \`${newPrefix}\`.`
+            });
+        }
     }
 }).toJSON();
