@@ -7,6 +7,7 @@ const ComponentsHandler = require("./handler/ComponentsHandler");
 const ComponentsListener = require("./handler/ComponentsListener");
 const EventsHandler = require("./handler/EventsHandler");
 const { QuickYAML } = require('quick-yaml.db');
+const mongoose = require('mongoose');
 
 class DiscordBot extends Client {
     collection = {
@@ -33,6 +34,20 @@ class DiscordBot extends Client {
     components_handler = new ComponentsHandler(this);
     events_handler = new EventsHandler(this);
     database = new QuickYAML(config.database.path);
+
+    connectToDatabase = async () => {
+        if (!config.database.useMongoDB) {
+            warn('Skipping MongoDB connection (quick-yml mode enabled)');
+            return;
+        }
+        try {
+            warn('Attempting connect to MongoDB... (this might take a while!)');
+            await mongoose.connect(process.env.DATABASE_URI);
+            success('Successfully connected to MongoDB.');
+        }   catch (err) {
+            error('Failed to connect to MongoDB:', err);
+        }
+    }
 
     constructor() {
         super({
@@ -76,7 +91,8 @@ class DiscordBot extends Client {
             this.components_handler.load();
             this.events_handler.load();
             this.startStatusRotation();
-
+            await this.connectToDatabase();
+            
             warn('Attempting to register application commands... (this might take a while!)');
             await this.commands_handler.registerApplicationCommands(config.development);
             success('Successfully registered application commands. For specific guild? ' + (config.development.enabled ? 'Yes' : 'No'));
